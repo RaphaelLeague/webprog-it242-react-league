@@ -21,7 +21,8 @@ body {
 }
 
 .app-wrapper {
-  max-width: 700px;
+  /* Increased from 700px to 1100px to fit both columns comfortably */
+  max-width: 1100px; 
   margin: 0 auto;
   padding: 3rem 1.5rem;
 }
@@ -29,7 +30,7 @@ body {
 /* Header & Typography */
 .hero-header {
   text-align: center;
-  margin-bottom: 3rem;
+  margin-bottom: 4rem;
 }
 
 .gradient-text {
@@ -48,6 +49,14 @@ body {
   margin: 0;
 }
 
+/* --- THE MAGIC HAPPENS HERE: Two Column Grid --- */
+.main-content {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr; /* Left column is smaller, right is wider */
+  gap: 3rem; /* Space between the columns */
+  align-items: start; /* Prevents the form from stretching vertically */
+}
+
 /* Glassmorphism Panels */
 .glass-panel {
   background: var(--panel-bg);
@@ -60,8 +69,10 @@ body {
 
 /* Form Section */
 .form-section {
-  margin-bottom: 3rem;
+  /* Removed bottom margin since Grid handles spacing now */
   box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+  position: sticky; /* Keeps the form in view when scrolling through comments! */
+  top: 2rem;
 }
 
 .guest-form {
@@ -130,6 +141,7 @@ input::placeholder, textarea::placeholder {
   text-align: center;
   color: var(--text-muted);
   font-style: italic;
+  padding-top: 2rem;
 }
 
 .message-bubble {
@@ -138,7 +150,7 @@ input::placeholder, textarea::placeholder {
 }
 
 .message-bubble:hover {
-  transform: scale(1.01);
+  transform: scale(1.02);
   border-color: rgba(255, 255, 255, 0.15);
 }
 
@@ -183,4 +195,16 @@ input::placeholder, textarea::placeholder {
   color: #cbd5e1;
   white-space: pre-wrap;
   line-height: 1.7;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+  .main-content {
+    grid-template-columns: 1fr; /* Stacks them back into 1 column on small screens */
+    gap: 2rem;
+  }
+  
+  .form-section {
+    position: static; /* Removes sticky behavior on mobile */
+  }
 }
