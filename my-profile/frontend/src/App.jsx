@@ -77,7 +77,7 @@ function App() {
             <button type="submit" className="glow-btn" disabled={isSubmitting}>
               {isSubmitting ? 'Sending...' : 'Publish Message'}
             </button>
-          </form>
+          </form>{entry.name?.charAt(0)?.toUpperCase() || '?'}
         </section>
 
         <section className="feed-section">
