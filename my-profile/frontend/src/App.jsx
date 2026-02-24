@@ -5,6 +5,7 @@ import './App.css';
 function App() {
   const [entries, setEntries] = useState([]);
   const [form, setForm] = useState({ name: '', message: '' });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const fetchEntries = async () => {
     try {
@@ -26,6 +27,7 @@ function App() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsSubmitting(true);
 
     try {
       const { error } = await supabase
@@ -34,58 +36,79 @@ function App() {
       if (error) throw error;
 
       setForm({ name: '', message: '' });
-      fetchEntries();
-      alert('Message signed successfully!');
+      await fetchEntries();
     } catch (error) {
       console.error('Failed to save entry', error);
       alert('Failed to sign guestbook: ' + error.message);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <div className="container">
-      <h1>Guestbook</h1>
+    <div className="app-wrapper">
+      <header className="hero-header">
+        <h1 className="gradient-text">Digital Guestbook</h1>
+        <p>Leave your mark on the internet.</p>
+      </header>
 
-      <div className="card">
-        <form onSubmit={handleSubmit}>
-          <div className="form-group">
-            <input
-              type="text"
-              placeholder="Your Name"
-              value={form.name}
-              onChange={e => setForm({ ...form, name: e.target.value })}
-              required
-            />
-          </div>
-          <div className="form-group">
-            <textarea
-              placeholder="Leave a message..."
-              value={form.message}
-              onChange={e => setForm({ ...form, message: e.target.value })}
-              required
-              rows={3}
-            />
-          </div>
-          <div className="actions">
-            <button type="submit">Sign Guestbook</button>
-          </div>
-        </form>
-      </div>
-
-      <div className="entries">
-        {entries.map(entry => (
-          <div key={entry.id} className="entry-card">
-            <div className="entry-header">
-              <strong>{entry.name}</strong>
-              <span className="date">{new Date(entry.created_at).toLocaleDateString()}</span>
+      <main className="main-content">
+        <section className="form-section glass-panel">
+          <form onSubmit={handleSubmit} className="guest-form">
+            <div className="input-group">
+              <input
+                type="text"
+                placeholder="What's your name?"
+                value={form.name}
+                onChange={e => setForm({ ...form, name: e.target.value })}
+                required
+                autoComplete="off"
+              />
             </div>
-            <p className="entry-message">{entry.message}</p>
-          </div>
-        ))}
-      </div>
+            <div className="input-group">
+              <textarea
+                placeholder="Write your message here..."
+                value={form.message}
+                onChange={e => setForm({ ...form, message: e.target.value })}
+                required
+                rows={4}
+              />
+            </div>
+            <button type="submit" className="glow-btn" disabled={isSubmitting}>
+              {isSubmitting ? 'Sending...' : 'Publish Message'}
+            </button>
+          </form>
+        </section>
+
+        <section className="feed-section">
+          {entries.length === 0 ? (
+            <p className="empty-state">It's quiet here. Be the first to post!</p>
+          ) : (
+            entries.map((entry) => (
+              <article key={entry.id} className="message-bubble glass-panel">
+                <div className="message-header">
+                  <div className="avatar">
+                    {entry.name.charAt(0).toUpperCase()}
+                  </div>
+                  <div className="meta-info">
+                    <h3 className="author-name">{entry.name}</h3>
+                    <time className="timestamp">
+                      {new Date(entry.created_at).toLocaleDateString(undefined, {
+                        month: 'short',
+                        day: 'numeric',
+                        year: 'numeric'
+                      })}
+                    </time>
+                  </div>
+                </div>
+                <p className="message-content">{entry.message}</p>
+              </article>
+            ))
+          )}
+        </section>
+      </main>
     </div>
   );
 }
 
 export default App;
-
