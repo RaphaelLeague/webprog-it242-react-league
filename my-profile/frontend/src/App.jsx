@@ -77,7 +77,7 @@ function App() {
             <button type="submit" className="glow-btn" disabled={isSubmitting}>
               {isSubmitting ? 'Sending...' : 'Publish Message'}
             </button>
-          </form>{entry.name?.charAt(0)?.toUpperCase() || '?'}
+          </form>
         </section>
 
         <section className="feed-section">
@@ -88,10 +88,11 @@ function App() {
               <article key={entry.id} className="message-bubble glass-panel">
                 <div className="message-header">
                   <div className="avatar">
-                    {entry.name.charAt(0).toUpperCase()}
+                    {/* Safety check added here to prevent crashes if name is blank */}
+                    {entry.name?.charAt(0)?.toUpperCase() || '?'}
                   </div>
                   <div className="meta-info">
-                    <h3 className="author-name">{entry.name}</h3>
+                    <h3 className="author-name">{entry.name || 'Anonymous'}</h3>
                     <time className="timestamp">
                       {new Date(entry.created_at).toLocaleDateString(undefined, {
                         month: 'short',
